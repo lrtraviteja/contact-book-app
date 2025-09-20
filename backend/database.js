@@ -21,7 +21,7 @@ const initializeDatabase = async () => {
 
         // Create contacts table if it doesn't exist
         await db.run(`
-            CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY, name TEXT, email TEXT, phone TEXT)
+            CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, phone TEXT UNIQUE)
         `);
 
         console.log('Connected to the SQLite database.');

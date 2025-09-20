@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const contactsRouter = Router();
 
-// POST /contacts - Add a new contact
+// POST - Add a new contact
 contactsRouter.post("/", async (req, res) => {
   try {
     const { name, email, phone } = req.body;
@@ -15,6 +15,18 @@ contactsRouter.post("/", async (req, res) => {
     }
 
     const db = req.app.locals.db;
+
+    // Check for existing contacts
+    const existingContact = await db.get(
+      "SELECT * FROM contacts WHERE email = ? OR phone = ?",
+      [email, phone]
+    );
+
+    if (existingContact) {
+      return res.status(409).json({
+        error: "Contact already exists with this email or phone number",
+      });
+    }
 
     // Insert new contact
     const result = await db.run(
@@ -34,7 +46,7 @@ contactsRouter.post("/", async (req, res) => {
   }
 });
 
-// GET /contacts - Fetch all contacts by pagination
+// GET /contacts - Fetch all contacts with pagination
 contactsRouter.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -43,10 +55,11 @@ contactsRouter.get("/", async (req, res) => {
 
     const db = req.app.locals.db;
 
+    // Get total count
     const totalResult = await db.get("SELECT COUNT(*) as count FROM contacts");
     const total = totalResult.count;
 
-    // Get all paginated contacts
+    // Get paginated contacts
     const contacts = await db.all(
       "SELECT * FROM contacts ORDER BY id LIMIT ? OFFSET ?",
       [limit, offset]
@@ -68,11 +81,19 @@ contactsRouter.get("/", async (req, res) => {
   }
 });
 
-// DELETE - Remove a contact
+// DELETE /contacts/:id - Remove a contact
 contactsRouter.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const all = req.query.all || false;
     const db = req.app.locals.db;
+
+    // Delete all contacts
+    if (all === 'true') {
+      await db.run("DELETE FROM contacts");
+      return res.status(204).json({ message: "All contacts deleted successfully" });
+    }
+
+    const id = req.params.id;
 
     // Check if contact exists
     const existingContact = await db.get(
@@ -85,8 +106,8 @@ contactsRouter.delete("/:id", async (req, res) => {
 
     // Delete the contact
     await db.run("DELETE FROM contacts WHERE id = ?", [id]);
-    res.json({ message: "Contact deleted successfully" });
-    res.status(204).send();
+
+    res.status(204).json({ message: "Contact deleted successfully" });
   } catch (error) {
     console.error("Error deleting contact:", error);
     res.status(500).json({ error: "Internal server error" });
