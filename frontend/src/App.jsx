@@ -64,7 +64,7 @@ const AppContent = () => {
   };
 
   return (
-    <div className="app">
+    <div className="min-h-screen flex flex-col" data-theme={theme}>
       <Header
         theme={theme}
         toggleTheme={toggleTheme}
@@ -72,7 +72,7 @@ const AppContent = () => {
         setSearchTerm={() => { }}
       />
 
-      <main className="app-main">
+      <main className="flex-grow bg-gray-200 dark:bg-gray-600 py-6">
         <div className="app-container">
           <div className="contacts-container">
 
@@ -84,6 +84,7 @@ const AppContent = () => {
                   setFormData({});
                 }}
                 initialData={formData}
+                theme={theme}
               />
             )}
 
@@ -95,6 +96,7 @@ const AppContent = () => {
               loading={loading}
               error={error}
               setShowForm={setShowForm}
+              theme={theme}
             />
 
             <Pagination
