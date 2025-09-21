@@ -32,7 +32,7 @@ const AppContent = () => {
     else document.body.classList.remove('dark')
   };
 
-  // Handle form submission
+  // Handler for form submission
   const handleFormSubmit = async (contactData) => {
     const result = await createContactFromAPI(contactData);
     if (result.success) {
@@ -43,7 +43,7 @@ const AppContent = () => {
     }
   };
 
-  // Handle contact deletion
+  // Contact Deletion Handler
   const handleDelete = async (id) => {
     const result = await deleteContactFromAPI(id);
 
@@ -52,7 +52,7 @@ const AppContent = () => {
     }
   };
 
-  // Handle delete all
+  // Delete All Contacts Handler
   const handleDeleteAll = async () => {
     if (window.confirm('Are you sure you want to delete all contacts? This action cannot be undone.')) {
       const result = await deleteAllContactsFromAPI();
