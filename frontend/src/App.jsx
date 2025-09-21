@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
 import { ContactProvider, useContact } from './context/ContactContext';
 import Header from './components/Header/index.jsx';
-
 import ContactForm from './components/ContactForm/index.jsx';
 import ContactsList from './components/ContactsList/index.jsx';
 import Pagination from './components/Pagination/index.jsx';
 
 const AppContent = () => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
+
+
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({});
 
@@ -24,6 +27,10 @@ const AppContent = () => {
     deleteAllContactsFromAPI,
   } = useContact();
 
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   // Toggle dark theme
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -36,19 +43,21 @@ const AppContent = () => {
   const handleFormSubmit = async (contactData) => {
     const result = await createContactFromAPI(contactData);
     if (result.success) {
+      toast.success('Contact created successfully');
       setShowForm(false);
       setFormData({});
     } else {
-      alert(result.error);
+      toast.error(`Failed to create contact: ${result.error}`);
     }
   };
 
   // Contact Deletion Handler
   const handleDelete = async (id) => {
     const result = await deleteContactFromAPI(id);
-
-    if (!result.success) {
-      alert(result.error);
+    if (result.success) {
+      toast.success('Contact deleted successfully');
+    } else {
+      toast.error(`Failed to delete contact: ${result.error}`);
     }
   };
 
@@ -56,9 +65,10 @@ const AppContent = () => {
   const handleDeleteAll = async () => {
     if (window.confirm('Are you sure you want to delete all contacts? This action cannot be undone.')) {
       const result = await deleteAllContactsFromAPI();
-
-      if (!result.success) {
-        alert(result.error);
+      if (result.success) {
+        toast.success('All contacts deleted successfully');
+      } else {
+        toast.error(`Failed to delete all contacts: ${result.error}`);
       }
     }
   };
@@ -107,6 +117,7 @@ const AppContent = () => {
           </div>
         </div>
       </main>
+      <ToastContainer />
     </div>
   );
 };
