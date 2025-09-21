@@ -73,7 +73,7 @@ const AppContent = () => {
       />
 
       <main className="flex-grow bg-gray-200 dark:bg-gray-600 py-6">
-        <div className="app-container">
+        <div className="container mx-auto">
           <div className="contacts-container">
 
             {showForm && (
