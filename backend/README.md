@@ -34,10 +34,10 @@ A RESTful API for managing contacts with features like duplicate prevention, pag
 
 ## Configuration
 
-Create a `.env` file in the backend directory with the following variables:
+Create a `.env` file in the backend directory with the following variables: (Refer `.env.example`)
 
 ```env
-DB_PATH=contacts.db
+DB_PATH='./contacts.db'
 PORT=3000
 ```
 
@@ -271,10 +271,6 @@ curl -X DELETE "http://localhost:3000/api/contacts/1?all=true"
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
-
-## License
-
-ISC
 
 ## Support
 
